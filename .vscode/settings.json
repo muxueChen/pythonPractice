@@ -1,4 +1,5 @@
 {
     "python.linting.pylintEnabled": true,
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "python.pythonPath": "/usr/local/bin/python3"
 }
