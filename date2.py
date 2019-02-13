@@ -1,7 +1,6 @@
-# 时间日期
-
+# -*- coding: utf-8 -*-
 import time
-import datetime
+from datetime import date, datetime, timedelta
 # 获取当前时间
 # localtime = time.localtime(time.time())
 # print(">>>>>>>>>{0!s}{1!s}".format(localtime, type(localtime)))
@@ -61,16 +60,19 @@ import datetime
 
 # 字符串形式计算时间差
 start ="2018-06-19 17:37:31"
-end = "2018-06-29 17:37:31"
+end = "2018-06-19 17:39:35"
 # 返回开始时间元组
 start=time.strptime(start, "%Y-%m-%d %H:%M:%S")
 # 返回结束时间元组
 end=time.strptime(end, "%Y-%m-%d %H:%M:%S")
 # 
-userStart = datetime.datetime(start[0], start[1], start[2])
-userEnd = datetime.datetime(end[0], end[1], end[2])
+userStart = datetime(start[0], start[1], start[2])
+userEnd = datetime(end[0], end[1], end[2])
 # 天数
 print('天数>>>>>',(userEnd-userStart).days)
+times = time.mktime(end) - time.mktime(start)
+m,s = divmod(times, 60)
+h, m = divmod(m, 60)
 # 精确到秒
-print((end-start).total_seconds())
+print(">>>>",h, m, s)
 
