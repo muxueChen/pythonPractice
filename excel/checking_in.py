@@ -64,23 +64,21 @@ def day_clock_in(name, clock_in_list):
     # 节假日加班 加班时长 = 下班打卡时间 - 上班打卡时间 - 1小时
     # 加班时长不足一小时不计加班时间
     overtime_hours = 0
-    if today[6] not in  [5, 6]:
+    
+    # 周五和周六算加班
+    if today[6] not in  [5, 6] :
         overtime_hours = off_dutyStamp - start_overtime_inStamp
     else:
         overtime_hours = off_dutyStamp - be_on_dutyStamp
-    
+
     if overtime_hours < 60*60:
         overtime_hours = 0
-    
+
     # 取分钟
     overtime_hours = int(overtime_hours/60)
     data_list.append(overtime_hours)
-    # 加班餐补，只有当下班卡时间戳大于加班餐时间戳才有加班餐
-    supper = (off_dutyStamp-overtime_supperStamp)>0
-    if supper:
-        print("餐补", name, time.strftime("%Y-%m-%d %H:%M:%S", off_duty))
-    if overtime_hours>0:
-        print("加班时长", name,time.strftime("%Y-%m-%d %H:%M:%S", off_duty),overtime_hours,"分钟")
+    # 加班餐补，只有当下班卡时间戳大于等于加班餐时间戳才有加班餐
+    supper = (off_dutyStamp-overtime_supperStamp)>=0
     data_list.append(supper)
     # 返回时间
     return data_list
@@ -91,6 +89,7 @@ def people_clock_in(name, clock_in_list):
     # 取出每天的打卡
     date_list = []
     oldDay = ''
+    number_of_days = 0
     for date_value in clock_in_list:
         # print(date_value)
         # 把date_value转换成具体的某一天
@@ -99,6 +98,7 @@ def people_clock_in(name, clock_in_list):
         if oldDay == dayStr:
             date_list.append(date_value)
         else:
+            number_of_days += 1
             if oldDay != '':
                 overtime = day_clock_in(name, date_list)
                 day_date_list.append(overtime)
@@ -121,11 +121,11 @@ def people_clock_in(name, clock_in_list):
         if element[0]:
             totalOverTime += element[0]
 
-    # 返回值，一个列表0：姓名，1：加班总时长，2：餐补
-    return [name, totalOverTime, totalMeal]
+    # 返回值，一个列表0：姓名，1：加班总时长，2：餐补, 3：总出勤天数
+    return [name, totalOverTime, totalMeal, number_of_days]
 
 def openexcel(input_file, output_file):
-    headers = ['姓名', '加班时长', '加班餐数']
+    headers = ['姓名', '加班时长（分钟）', '加班餐数（次）','总出勤天数（天）']
     input_headers = ['姓名','打卡时间']
     output_workbook = Workbook()
     workOvertimeSheet = output_workbook.add_sheet('加班')
@@ -160,6 +160,7 @@ def openexcel(input_file, output_file):
                 workOvertimeSheet.write(row_index, column_index, element)
         output_workbook.save(output_file)
 if __name__ == '__main__':
-    input_file = './2019_1.xlsx'
-    output_file = './output/2019_1.xlsx'
+    
+    input_file = './input/杭州源石云科技有限公司_考勤报表_20190226-20190325.xlsx'
+    output_file = './output/杭州源石云科技有限公司_考勤报表_20190226-20190325.xlsx'
     openexcel(input_file, output_file)
